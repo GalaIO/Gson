@@ -1,14 +1,14 @@
 # Project: main
-# Makefile created by Dev-C++ 5.5.3
+# Makefile created by Dev-C++ 5.4.0
 
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = main.o Gson.o
-LINKOBJ  = main.o Gson.o
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc
+OBJ      = main.o Gson.o $(RES)
+LINKOBJ  = main.o Gson.o $(RES)
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -static-libstdc++ -static-libgcc
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
-CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
 BIN      = main.exe
 CXXFLAGS = $(CXXINCS) 
 CFLAGS   = $(INCS) 
@@ -17,6 +17,7 @@ RM       = rm -f
 .PHONY: all all-before all-after clean clean-custom
 
 all: all-before $(BIN) all-after
+
 
 clean: clean-custom
 	${RM} $(OBJ) $(BIN)

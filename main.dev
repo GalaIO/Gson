@@ -28,8 +28,8 @@ Folders=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=
-UnitCount=3
+CompilerSettings=0000000000000000000000000
+UnitCount=4
 
 [VersionInfo]
 Major=1
@@ -76,6 +76,15 @@ CompileCpp=0
 Folder=main
 Compile=1
 Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=README.md
+Folder=main
+Compile=0
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
