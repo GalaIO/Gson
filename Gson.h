@@ -76,7 +76,7 @@
 //#define GSON_DEBUG	GSON_DEBUG_PARSER_ON
 //shut down gson_debug.
 //#define GSON_DEBUG	GSON_DEBUG_OFF
-#define GSON_DEBUG	GSON_DEBUG_OFF
+#define GSON_DEBUG	GSON_DEBUG_ON
 
 
 #ifdef GSON_DEBUG
@@ -144,7 +144,7 @@ typedef struct {
  * Creates a new generator based over a given  buffer with an array of tokens
  * available.
  */
-void gson_init_generator(char *str);
+void gson_init_generator(char *str,int str_size);
 
 gsonerr_t GSON_START();
 
