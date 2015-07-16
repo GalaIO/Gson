@@ -660,7 +660,7 @@ int gsonCheck(const char *gson, gsontok_t *tok, const char *s) {
 			strncmp(gson + tok->start, s, tok->end - tok->start) == 0) {
 		return GSON_ERROR_NONE;
 	}
-	GSON_DEBUG_DIA(GSON_DEBUG_PARSER_ON,("-PARSER in gsonCheck: check the string with token as the string type filed.\n"));
+	GSON_DEBUG_DIA(GSON_DEBUG_PARSER_ON,("-PARSER in gsonCheck: check the string with token as the string type filed as \"%s\" with \"%.*s\".\n",s,tok->end - tok->start,gson + tok->start));
 	return GSON_ERROR_CHECK;
 }
 /*

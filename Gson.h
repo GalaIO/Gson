@@ -76,7 +76,7 @@
 //#define GSON_DEBUG	GSON_DEBUG_PARSER_ON
 //shut down gson_debug.
 //#define GSON_DEBUG	GSON_DEBUG_OFF
-#define GSON_DEBUG	GSON_DEBUG_ON
+#define GSON_DEBUG	GSON_DEBUG_OFF
 
 
 #ifdef GSON_DEBUG
