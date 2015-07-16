@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #include "Gson.h"
-
+/*
 int main(){
 	//the room for generator that you should alloc it whit 4+length of jsonStr.
 	#define STR_SIZE	154
@@ -40,20 +40,20 @@ int main(){
 	gsonInsertV(GSON_STRING,"xiaoming");
 	GSON_END_ARRAY();
 	GSON_END_OBJECT();
-	/*gsonInsertKV(GSON_STRING,"type","Gson");
-	gsonInsertKV(GSON_PRIMITIVE,"num","123");
-	GSON_START_ARRAY("arr");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaohong");
-	GSON_END_ARRAY();*/
+//	gsonInsertKV(GSON_STRING,"type","Gson");
+//	gsonInsertKV(GSON_PRIMITIVE,"num","123");
+//	GSON_START_ARRAY("arr");
+//	gsonInsertV(GSON_STRING,"xiaoming");
+//	gsonInsertV(GSON_STRING,"xiaohong");
+//	GSON_END_ARRAY();
 	GSON_END();
 	
 	printf("%s*****%d\n",str,strlen(str));
 	return 0;
-}
+}*/
 
-/*
-#define TEST_SIZE_KB	4
+
+#define TEST_SIZE_KB	1
 
 int main(){
 	
@@ -131,4 +131,4 @@ int main(){
 	}
 	
 	return 0;
-}*/
+}
