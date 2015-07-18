@@ -128,6 +128,23 @@ typedef struct {
 	int parent;
 }gsontok_t;
 
+
+/*
+ *
+ *defien a genarator struct.
+ *
+**/
+//this bak_fg indicates the truth that the json data cannot nesting over 100 object or array.
+//that enough for oridary json data.
+#define GSON_BACK_FLAG		100
+typedef struct {
+	char *buf;
+	int size; 
+	//this bak_fg indicates the truth that the json data cannot nesting over 100 object or array.
+	//that enough for oridary json data.
+	char bak_fg[GSON_BACK_FLAG+2];
+}gson_generator; 
+
 /**
  * GSON parser. Contains an array of token blocks available. Also stores
  * the string being parsed now and current position in that string
@@ -144,25 +161,25 @@ typedef struct {
  * Creates a new generator based over a given  buffer with an array of tokens
  * available.
  */
-void gson_init_generator(char *str,int str_size);
+void gson_init_generator(gson_generator *generator,char *str,int str_size);
 
-gsonerr_t GSON_START();
+gsonerr_t GSON_START(gson_generator *generator);
 
-gsonerr_t GSON_END();
+gsonerr_t GSON_END(gson_generator *generator);
 
-gsonerr_t GSON_START_OBJECT();
+gsonerr_t GSON_START_OBJECT(gson_generator *generator);
 
-gsonerr_t GSON_END_OBJECT();
+gsonerr_t GSON_END_OBJECT(gson_generator *generator);
 
-gsonerr_t GSON_START_ARRAY(char *name);
+gsonerr_t GSON_START_ARRAY(gson_generator *generator,char *name);
 
-gsonerr_t GSON_END_ARRAY();
+gsonerr_t GSON_END_ARRAY(gson_generator *generator);
 
-gsonerr_t gsonInsertKV(gsontype_t stype,char *key,char *value);
+gsonerr_t gsonInsertKV(gson_generator *generator,gsontype_t stype,char *key,char *value);
 
-gsonerr_t gsonInsertK(char *key);
+gsonerr_t gsonInsertK(gson_generator *generator,char *key);
 
-gsonerr_t gsonInsertV(gsontype_t stype,char *value);
+gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value);
 
 
 /**

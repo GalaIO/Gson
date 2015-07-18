@@ -49,6 +49,11 @@
 	Date:			2015-7-6 11:09 pm 
 	Author:			LaoGuo
 	Describtion:	-add debug info for gson,it can use conveniently.
+									
+	Date:			2015-7-18 8£:23 pm 
+	Author:			LaoGuo
+	Describtion:	-change the way to generator a json str.
+					 because share a common var must handle ansy problem in muli-task place.
 */
 
 #include "Gson.h"
@@ -58,185 +63,176 @@
 */
 #define GSON_STR_CPY(des,src)				{for(;*src!='\0';des++,src++) *des=*src;*des='\0';}
 
-//this bak_fg indicates the truth that the json data cannot nesting over 100 object or array.
-//that enough for oridary json data.
-#define GSON_BACK_FLAG		100
-static char bak_fg[GSON_BACK_FLAG+2];
-//init a generator variable {NULL,0} for boundary to function.
-static struct {
-	char *buf;
-	int size; 
-}generator={NULL,0}; 
 //backup data.
-#define GSON_BAK(buf)						{for(bak_fg[GSON_BACK_FLAG+1]=GSON_BACK_FLAG;(*buf=='}'||*buf==']')&&bak_fg[GSON_BACK_FLAG+1];bak_fg[GSON_BACK_FLAG+1]--,buf--){bak_fg[bak_fg[GSON_BACK_FLAG+1]]=*buf;}}
+#define GSON_BAK(buf)						{for(generator->bak_fg[GSON_BACK_FLAG+1]=GSON_BACK_FLAG;(*buf=='}'||*buf==']')&&generator->bak_fg[GSON_BACK_FLAG+1];generator->bak_fg[GSON_BACK_FLAG+1]--,buf--){generator->bak_fg[generator->bak_fg[GSON_BACK_FLAG+1]]=*buf;}}
 //recover json data.
-#define GSON_BAK_RE(buf)					{for(bak_fg[GSON_BACK_FLAG+1]+=1;bak_fg[GSON_BACK_FLAG+1]<=GSON_BACK_FLAG;bak_fg[GSON_BACK_FLAG+1]++,buf++){*buf=bak_fg[bak_fg[GSON_BACK_FLAG+1]];}}
+#define GSON_BAK_RE(buf)					{for(generator->bak_fg[GSON_BACK_FLAG+1]+=1;generator->bak_fg[GSON_BACK_FLAG+1]<=GSON_BACK_FLAG;generator->bak_fg[GSON_BACK_FLAG+1]++,buf++){*buf=generator->bak_fg[generator->bak_fg[GSON_BACK_FLAG+1]];}}
 
 
 /**
  * Creates a new generator based over a given  generator.buffer with an array of tokens
  * available.
  */
-void gson_init_generator(char *str,int str_size) {
-	generator.buf=str;
-	generator.size=str_size;
+void gson_init_generator(gson_generator *generator,char *str,int str_size) {
+	generator->buf=str;
+	generator->size=str_size;
 }
 
-gsonerr_t GSON_START(){
+gsonerr_t GSON_START(gson_generator *generator){
 	//generator.buf must remain more 4 char.
-	if(generator.buf==NULL||(generator.size=generator.size-4)<0){
+	if(generator->buf==NULL||(generator->size=generator->size-4)<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	generator.buf[0]='{';
-	generator.buf[1]=',';
-	generator.buf[2]='}';
-	generator.buf[3]='\0';
-	generator.buf+=3;
+	generator->buf[0]='{';
+	generator->buf[1]=',';
+	generator->buf[2]='}';
+	generator->buf[3]='\0';
+	generator->buf+=3;
 	return GSON_ERROR_NONE;
 }
 
-gsonerr_t GSON_END(){
-	if(generator.buf==NULL){
+gsonerr_t GSON_END(gson_generator *generator){
+	if(generator->buf==NULL){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	GSON_END_OBJECT();
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	GSON_END_OBJECT(generator);
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}
-	if(*generator.buf==','){
-		*generator.buf='\0';
+	if(*generator->buf==','){
+		*generator->buf='\0';
 		//if there is a ',' yes,that we want.
 		//we should end json by the character.
 		return GSON_ERROR_NONE;
 	}
-	generator.buf+=1;
+	generator->buf+=1;
 	GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END: end with a unexpected result.\n"));
 	return GSON_ERROR_PART;
 }
 
-gsonerr_t GSON_START_OBJECT(){
+gsonerr_t GSON_START_OBJECT(gson_generator *generator){
 	//generator.buf must remain more 3 char.
-	if(generator.buf==NULL||(generator.size=generator.size-3)<0){
+	if(generator->buf==NULL||(generator->size=generator->size-3)<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START_OBJECT: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
 	
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START_OBJECT: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*(generator.buf-1)=='{'||*(generator.buf-1)=='['||*(generator.buf-1)==':'){
-		*(generator.buf)='{';
-		*(++generator.buf)=',';
-		*(++generator.buf)='}';
+	if(*(generator->buf-1)=='{'||*(generator->buf-1)=='['||*(generator->buf-1)==':'){
+		*(generator->buf)='{';
+		*(++generator->buf)=',';
+		*(++generator->buf)='}';
 	}else{
-		*(++generator.buf)='{';
-		*(++generator.buf)=',';
-		*(++generator.buf)='}';
+		*(++generator->buf)='{';
+		*(++generator->buf)=',';
+		*(++generator->buf)='}';
 	}
-	++generator.buf;
-	GSON_BAK_RE(generator.buf);
-	*(generator.buf)='\0';
+	++generator->buf;
+	GSON_BAK_RE(generator->buf);
+	*(generator->buf)='\0';
 	return GSON_ERROR_NONE;
 	
 }
-gsonerr_t GSON_END_OBJECT(){
-	if(generator.buf==NULL){
+gsonerr_t GSON_END_OBJECT(gson_generator *generator){
+	if(generator->buf==NULL){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END_OBJECT: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
 	char *tmp;
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END_OBJECT: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	tmp=generator.buf;
-	*(generator.buf++)=',';
-	GSON_BAK_RE(generator.buf);
-	*(generator.buf)='\0';
+	tmp=generator->buf;
+	*(generator->buf++)=',';
+	GSON_BAK_RE(generator->buf);
+	*(generator->buf)='\0';
 	tmp[0]='}';
 	tmp[1]=',';	
 	return GSON_ERROR_NONE;	
 }
 
 
-gsonerr_t GSON_START_ARRAY(char *name){
+gsonerr_t GSON_START_ARRAY(gson_generator *generator,char *name){
 	//generator.buf must remain more 5+strlen(name) char.
-	if(generator.buf==NULL||(generator.size=generator.size-5-strlen(name))<0){
+	if(generator->buf==NULL||(generator->size=generator->size-5-strlen(name))<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START_ARRAY: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START_ARRAY: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
 	
-	if(*(generator.buf-1)!='{'&&*(generator.buf-1)!='['){
-		generator.buf++;
+	if(*(generator->buf-1)!='{'&&*(generator->buf-1)!='['){
+		generator->buf++;
 	}
 	
-	*(generator.buf++)='\"';
-	GSON_STR_CPY(generator.buf,name);
-	*(generator.buf++)='\"';
-	*(generator.buf++)=':';
-	*(generator.buf++)='[';
-	*(generator.buf++)=',';
-	*(generator.buf++)=']';
-	GSON_BAK_RE(generator.buf);
-	*(generator.buf)='\0';
+	*(generator->buf++)='\"';
+	GSON_STR_CPY(generator->buf,name);
+	*(generator->buf++)='\"';
+	*(generator->buf++)=':';
+	*(generator->buf++)='[';
+	*(generator->buf++)=',';
+	*(generator->buf++)=']';
+	GSON_BAK_RE(generator->buf);
+	*(generator->buf)='\0';
 	return GSON_ERROR_NONE;
 }
 
 
-gsonerr_t GSON_END_ARRAY(){
+gsonerr_t GSON_END_ARRAY(gson_generator *generator){
 	//generator.buf must remain more 1 char.
-	if(generator.buf==NULL||(generator.size=generator.size-1)<0){
+	if(generator->buf==NULL||(generator->size=generator->size-1)<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END_ARRAY: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
 	char *tmp;
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END_ARRAY: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	tmp=generator.buf;
-	*(generator.buf++)=',';
-	GSON_BAK_RE(generator.buf);
-	*(generator.buf)='\0';
+	tmp=generator->buf;
+	*(generator->buf++)=',';
+	GSON_BAK_RE(generator->buf);
+	*(generator->buf)='\0';
 	tmp[0]=']';
 	tmp[1]=',';	
 	return GSON_ERROR_NONE;	
@@ -268,121 +264,121 @@ gsonerr_t GSON_END_ARRAY(){
  *	    false
  *	    null
 */
-gsonerr_t gsonInsertKV(gsontype_t stype,char *key,char *value){
+gsonerr_t gsonInsertKV(gson_generator *generator,gsontype_t stype,char *key,char *value){
 //key-value is the type of the value pair.
 //generator.buf is the alright index of the new inserted type in gson String, and point to } or ].
 	
 	//generator.buf must remain more 4+strlen(key)+strlen(value) char.
-	if(generator.buf==NULL||(generator.size=generator.size-4-strlen(key)-strlen(value))<0){
+	if(generator->buf==NULL||(generator->size=generator->size-4-strlen(key)-strlen(value))<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertKV: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}	
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertKV: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*(generator.buf-1)!='{'&&*(generator.buf-1)!='['){
-		generator.buf++;
+	if(*(generator->buf-1)!='{'&&*(generator->buf-1)!='['){
+		generator->buf++;
 	}
-	*(generator.buf++)='\"';
-	GSON_STR_CPY(generator.buf,key);
-	*(generator.buf++)='\"';
-	*(generator.buf++)=':';
+	*(generator->buf++)='\"';
+	GSON_STR_CPY(generator->buf,key);
+	*(generator->buf++)='\"';
+	*(generator->buf++)=':';
 	if(stype==GSON_STRING){
-		*(generator.buf++)='\"';
-		GSON_STR_CPY(generator.buf,value);
-		*(generator.buf++)='\"';
+		*(generator->buf++)='\"';
+		GSON_STR_CPY(generator->buf,value);
+		*(generator->buf++)='\"';
 	}else if(stype==GSON_PRIMITIVE){
-		GSON_STR_CPY(generator.buf,value);
+		GSON_STR_CPY(generator->buf,value);
 	}
-	*(generator.buf++)=',';
-	GSON_BAK_RE(generator.buf);
-	*generator.buf='\0';
+	*(generator->buf++)=',';
+	GSON_BAK_RE(generator->buf);
+	*generator->buf='\0';
 	return GSON_ERROR_NONE;
 }
 
 /*
  *insert ' "name": ' to json for object.
 */
-gsonerr_t gsonInsertK(char *key){
+gsonerr_t gsonInsertK(gson_generator *generator,char *key){
 //key-value is the type of the value pair.
 //generator.buf is the alright index of the new inserted type in gson String, and point to } or ].
 	
 	//generator.buf must remain more 3+strlen(key) char.
-	if(generator.buf==NULL||(generator.size=generator.size-3-strlen(key))<0){
+	if(generator->buf==NULL||(generator->size=generator->size-3-strlen(key))<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertK: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}	
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertK: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*(generator.buf-1)!='{'&&*(generator.buf-1)!='['){
-		generator.buf++;
+	if(*(generator->buf-1)!='{'&&*(generator->buf-1)!='['){
+		generator->buf++;
 	}
-	*(generator.buf++)='\"';
-	GSON_STR_CPY(generator.buf,key);
-	*(generator.buf++)='\"';
-	*(generator.buf++)=':';
-	*(generator.buf++)=',';
-	GSON_BAK_RE(generator.buf);
-	*generator.buf='\0';
+	*(generator->buf++)='\"';
+	GSON_STR_CPY(generator->buf,key);
+	*(generator->buf++)='\"';
+	*(generator->buf++)=':';
+	*(generator->buf++)=',';
+	GSON_BAK_RE(generator->buf);
+	*generator->buf='\0';
 	return GSON_ERROR_NONE;
 }
 
 /*
  *insert ' "value" ' to json for array.
 */
-gsonerr_t gsonInsertV(gsontype_t stype,char *value){
+gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value){
 //key-value is the type of the value pair.
 //generator.buf is the alright index of the new inserted type in gson String, and point to } or ].
 	
 	//generator.buf must remain more 2+strlen(value) char.
-	if(generator.buf==NULL||(generator.size=generator.size-2-strlen(value))<0){
+	if(generator->buf==NULL||(generator->size=generator->size-2-strlen(value))<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertV: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*generator.buf=='\0'){
-		generator.buf--;
+	if(*generator->buf=='\0'){
+		generator->buf--;
 	}	
-	GSON_BAK(generator.buf);
-	if(*generator.buf!=','){
-		generator.buf++;
-		GSON_BAK_RE(generator.buf);
-		*generator.buf='\0';
+	GSON_BAK(generator->buf);
+	if(*generator->buf!=','){
+		generator->buf++;
+		GSON_BAK_RE(generator->buf);
+		*generator->buf='\0';
 		//not a insertable format.
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertV: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*(generator.buf-1)!='{' &&*(generator.buf-1)!='['){
-		generator.buf++;
+	if(*(generator->buf-1)!='{' &&*(generator->buf-1)!='['){
+		generator->buf++;
 	}
 	if(stype==GSON_STRING){
-		*(generator.buf++)='\"';
-		GSON_STR_CPY(generator.buf,value);
-		*(generator.buf++)='\"';
+		*(generator->buf++)='\"';
+		GSON_STR_CPY(generator->buf,value);
+		*(generator->buf++)='\"';
 	}else if(stype==GSON_PRIMITIVE){
-		GSON_STR_CPY(generator.buf,value);
+		GSON_STR_CPY(generator->buf,value);
 	}
-	*(generator.buf++)=',';
-	GSON_BAK_RE(generator.buf);
-	*generator.buf='\0';
+	*(generator->buf++)=',';
+	GSON_BAK_RE(generator->buf);
+	*generator->buf='\0';
 	return GSON_ERROR_NONE;
 }
 
