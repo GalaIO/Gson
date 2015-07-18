@@ -12,51 +12,12 @@
 #include <stdio.h>
 
 #include "Gson.h"
-/*
-int main(){
-	//the room for generator that you should alloc it whit 4+length of jsonStr.
-	#define STR_SIZE	154
-	
-	char *temp,str[STR_SIZE];
-	//create
-	// {type:"Gson",num:123,arr:[{name:"xiaoming",age:12},{name:"xiaohong",age:14}]}
-	gson_init_generator(str,STR_SIZE);
-	GSON_START();
-	gsonInsertK("xiaoming");
-	GSON_START_OBJECT();
-	gsonInsertKV(GSON_PRIMITIVE,"num","123");
-	GSON_START_ARRAY("arr");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	GSON_END_ARRAY();
-	GSON_START_ARRAY("arr");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	gsonInsertV(GSON_STRING,"xiaoming");
-	GSON_END_ARRAY();
-	GSON_END_OBJECT();
-//	gsonInsertKV(GSON_STRING,"type","Gson");
-//	gsonInsertKV(GSON_PRIMITIVE,"num","123");
-//	GSON_START_ARRAY("arr");
-//	gsonInsertV(GSON_STRING,"xiaoming");
-//	gsonInsertV(GSON_STRING,"xiaohong");
-//	GSON_END_ARRAY();
-	GSON_END();
-	
-	printf("%s*****%d\n",str,strlen(str));
-	return 0;
-}*/
 
 
 #define TEST_SIZE_KB	1
 
 int main(){
-	
+	gson_generator generator;
 	char *temp,str[TEST_SIZE_KB*1100];
 	int i;
 	int r;
@@ -64,23 +25,23 @@ int main(){
 	gsontok_t t[12*TEST_SIZE_KB*17]; //We expect no more than 128 tokens 
 	//create
 	// {type:"Gson",num:123,arr:[{name:"xiaoming",age:12},{name:"xiaohong",age:14}]}
-	gson_init_generator(str,TEST_SIZE_KB*1100);
-	GSON_START();
+	gson_init_generator(&generator,str,TEST_SIZE_KB*1100);
+	GSON_START(&generator);
 	for(i=1;i<12*TEST_SIZE_KB;i++){
-		gsonInsertKV(GSON_STRING,"type","Gson");
-		gsonInsertKV(GSON_PRIMITIVE,"num","123");
-		GSON_START_ARRAY("arr");
-		GSON_START_OBJECT();
-		gsonInsertKV(GSON_STRING,"name","xiaoming");
-		gsonInsertKV(GSON_PRIMITIVE,"age","12");
-		GSON_END_OBJECT();
-		GSON_START_OBJECT();
-		gsonInsertKV(GSON_STRING,"name","xiaohong");
-		gsonInsertKV(GSON_PRIMITIVE,"age","13");
-		GSON_END_OBJECT();
-		GSON_END_ARRAY();
+		gsonInsertKV(&generator,GSON_STRING,"type","Gson");
+		gsonInsertKV(&generator,GSON_PRIMITIVE,"num","123");
+		GSON_START_ARRAY(&generator,"arr");
+		GSON_START_OBJECT(&generator);
+		gsonInsertKV(&generator,GSON_STRING,"name","xiaoming");
+		gsonInsertKV(&generator,GSON_PRIMITIVE,"age","12");
+		GSON_END_OBJECT(&generator);
+		GSON_START_OBJECT(&generator);
+		gsonInsertKV(&generator,GSON_STRING,"name","xiaohong");
+		gsonInsertKV(&generator,GSON_PRIMITIVE,"age","13");
+		GSON_END_OBJECT(&generator);
+		GSON_END_ARRAY(&generator);
 	}
-	GSON_END();
+	GSON_END(&generator);
 	
 	printf("%s*****%d\n",str,strlen(str));
 	
