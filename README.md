@@ -18,7 +18,7 @@ gson parser modify from jsmn.
 	Date:			2015-2-6 
 	Author:			LaoGuo
 	Describtion:	update the code of gson-creator
-					we can creator-gson data on one generator.buf!!!
+					we can creator-gson data on one buf!!!
 					but only case by case,,,,,
 					
 					same api  rather than  different usal.
@@ -49,9 +49,30 @@ gson parser modify from jsmn.
 	Date:			2015-7-6 8:30 pm 
 	Author:			LaoGuo
 	Describtion:	-add err info for json generator.
-					-handler generator.buf point autoly.	
+					-handler buf point autoly.	
 									
 	Date:			2015-7-6 11:09 pm 
 	Author:			LaoGuo
 	Describtion:	-add debug info for gson,it can use conveniently.
+									
+	Date:			2015-7-19 7:41 pm 
+	Author:			GalaIO
+	Describtion:	-add more extern macro.
 */
+/*
+ *
+ *	Author:			GalaIO
+ *	Date:			2015-7-18 9:29 PM
+ *	Description:	-build a tree for JSON generator and parser. 
+ *					-add json_type struct as super class.
+ *					-add json_pair json_object json_array as sub-class.
+ *					-add quick macro for build JSON tree. 
+ *
+ *
+ *	Author:			GalaIO
+ *	Date:			2015-7-19 12:57 AM
+ *	Description:	-add GSONTREE_OBJECT_KV and GSONTREE_OBJECT for build object data.
+ *				
+ *				
+ *				
+**/

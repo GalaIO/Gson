@@ -345,7 +345,7 @@ gsonerr_t gsonInsertK(gson_generator *generator,char *key){
 /*
  *insert ' "value" ' to json for array.
 */
-gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value){
+gsonerr_t gsonInsertV2K(gson_generator *generator,gsontype_t stype,gsontype_t ktype,char *value){
 //key-value is the type of the value pair.
 //generator.buf is the alright index of the new inserted type in gson String, and point to } or ].
 	
@@ -366,7 +366,7 @@ gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertV: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*(generator->buf-1)!='{' &&*(generator->buf-1)!='['){
+	if(*(generator->buf-1)!='{' &&*(generator->buf-1)!='['&&ktype==GSON_ARRAY){
 		generator->buf++;
 	}
 	if(stype==GSON_STRING){

@@ -49,6 +49,10 @@
 	Date:			2015-7-6 11:09 pm 
 	Author:			LaoGuo
 	Describtion:	-add debug info for gson,it can use conveniently.
+									
+	Date:			2015-7-19 7:41 pm 
+	Author:			GalaIO
+	Describtion:	-add more extern macro.
 */
 #ifndef _GSON_H_
 #define _GSON_H_
@@ -77,7 +81,7 @@
 //#define GSON_DEBUG	GSON_DEBUG_PARSER_ON
 //shut down gson_debug.
 //#define GSON_DEBUG	GSON_DEBUG_OFF
-#define GSON_DEBUG	GSON_DEBUG_OFF
+#define GSON_DEBUG	GSON_DEBUG_ON
 
 
 #ifdef GSON_DEBUG
@@ -191,8 +195,14 @@ gsonerr_t gsonInsertKV(gson_generator *generator,gsontype_t stype,char *key,char
 
 gsonerr_t gsonInsertK(gson_generator *generator,char *key);
 
-gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value);
+gsonerr_t gsonInsertV2K(gson_generator *generator,gsontype_t stype,gsontype_t ktype,char *value);
 
+//extern macro
+#define GSON_INERT_PRIMITIVE(generator,value)	gsonInsertV2K((gson_generator *)generator,GSON_PRIMITIVE,GSON_PRIMITIVE,value)
+#define GSON_INERT_STRING(generator,value)		gsonInsertV2K((gson_generator *)generator,GSON_STRING,GSON_STRING,value)
+
+#define GSON_INERT_PRIMITIVE_V2A(generator,value)	gsonInsertV2K((gson_generator *)generator,GSON_PRIMITIVE,GSON_ARRAY,value)
+#define GSON_INERT_STRING_V2A(generator,value)		gsonInsertV2K((gson_generator *)generator,GSON_STRING,GSON_ARRAY,value)
 
 /**
  * Create GSON parser over an array of tokens
