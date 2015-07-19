@@ -60,7 +60,8 @@
 
 #define GSON_DEBUG_GENERATOR_ON	0x01
 #define GSON_DEBUG_PARSER_ON	0x02
-#define GSON_DEBUG_ON			0x03
+#define GSON_DEBUG_GSONTREE_ON	0x04
+#define GSON_DEBUG_ON			0x07
 #define GSON_DEBUG_OFF			0x00
 
 /*
@@ -128,6 +129,17 @@ typedef struct {
 	int parent;
 }gsontok_t;
 
+/**
+ * GSON token description for json_pair entire info.
+ */
+typedef struct {
+	char *buf;
+	gsontype_t type;
+	int startK;
+	int sizeK;
+	int startV;
+	int sizeV;
+}gsontok_p;
 
 /*
  *
