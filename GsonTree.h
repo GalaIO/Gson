@@ -21,55 +21,59 @@
 #include "gson.h"
 //as a arg for gson pair that it indicate the way of get or set for json-tree. 
 typedef enum{
-	GET_h=0,
-	SET_h
+	GET_value=0,
+	SET_value
 }gsonHandler_t;
 
 //a super class ,it's pointer can quote sub-class.
 typedef struct gsontree_type{
 	gsontype_t 	type;
-	void*		empty;	//declre a void * for warning.
+	//void*		empty;	//declre a void * for warning.
 }gsontree_type; 
 
-//the key-value type.
+//the temp pair.
 typedef struct gsontree_pair{
+	char *name;
+	gsontree_type *pair_type;		
+}gsontree_pair;
+
+//the key-value type.
+typedef struct gsontree_kv{
 	gsontype_t 	type;
 	//callback protype.
 	// @param	temp  can cast to (gson_generator *) or (gsontok_p *) for getter and setter.
 	// @param   sog	  indicate the handler is set or get.
 	gsonerr_t 	(*handler)(void *temp,gsonHandler_t sog);		
-}gsontree_pair;
+}gsontree_kv;
 
 //the object.
 typedef struct gsontree_object{
 	gsontype_t 		type;
-	#define 		GSONTREE_OBJECT_NAME_SIZE	10
-	char			name[GSONTREE_OBJECT_NAME_SIZE];
 	int		  		count;
-	gsontree_type 	*current_tree;
+	gsontree_pair 	*current_tree;
 }gsontree_object;
 
 //the array.
 typedef struct gsontree_array{
 	gsontype_t 		type;
-	#define 		GSONTREE_ARRAY_NAME_SIZE	10
-	char			name[GSONTREE_ARRAY_NAME_SIZE];
 	//callback protype.
 	// @param	temp  can cast to (gson_generator *) or (gsontok_p *) for getter and setter.
 	// @param   sog	  indicate the handler is set or get.
 	gsonerr_t 	(*handler)(void *temp,gsonHandler_t sog);
 }gsontree_array;
 
-#define GSONTREE_STRING(handler)		{GSON_STRING,(handler)}
-#define GSONTREE_PRIMITIVE(handler)		{GSON_PRIMITIVE,(handler)}
+#define GSONTREE_STRING(name,handler)			const gsontree_kv pair_##name={GSON_STRING,(handler)}
+#define GSONTREE_PRIMITIVE(name,handler)		const gsontree_kv pair_##name={GSON_PRIMITIVE,(handler)}
+#define GSONTREE_ARRAY(name,handler)			const gsontree_array pair_##name={GSON_ARRAY,(handler)}
 
-#define GSONTREE_KV(name)				static gsontree_type pair_##name[]    
-#define GSONTREE(name,count)			static gsontree_object name = { GSON_OBJECT,"",count, pair_##name}
+#define GSONTREE_PAIR(name)				{#name , (gsontree_type*)&pair_##name}
 
-#define GSONTREE_OBJECT_KV(name)		gsontree_type pair_##name[]    
-#define GSONTREE_OBJECT(name,count)		gsontree_object name = { GSON_OBJECT,#name,count, pair_##name}
+#define GSONTREE_KV(name)				const gsontree_pair pairARR_##name[]    
+#define GSONTREE(name,count)			const gsontree_object name = { GSON_OBJECT,count, (gsontree_pair *)pairARR_##name}
+
+#define GSONTREE_OBJECT_KV(name)		const gsontree_pair pairARR_##name[]    
+#define GSONTREE_OBJECT(name,count)		const gsontree_object pair_##name = { GSON_OBJECT,count, (gsontree_pair *)pairARR_##name}
    
-#define GSONTREE_ARRAY(name,handler)	{GSON_ARRAY,#name,(handler)}
 
 
 //

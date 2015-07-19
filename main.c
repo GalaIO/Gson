@@ -28,20 +28,66 @@
 ///
 
 
-gsonerr_t 	xuehao(void *temp,gsonHandler_t sog){
-	printf("1\n");	
+gsonerr_t Num(void *temp,gsonHandler_t sog){
+	printf("1\n");
+	if(sog == GET_value){
+		GSON_INERT_PRIMITIVE(temp,"1504121988");
+	}else{
+		
+	}
 	return 0;	
 }
-gsonerr_t 	xingming(void *temp,gsonHandler_t sog){
+GSONTREE_PRIMITIVE(Num,Num);
+gsonerr_t name(void *temp,gsonHandler_t sog){
 	printf("2\n");	
+	if(sog == GET_value){
+		GSON_INERT_STRING(temp,"pro.yang");
+	}else{
+		
+	}
 	return 0;	
 }
+GSONTREE_STRING(name,name);
 
-GSONTREE_KV(stu)={
-	GSONTREE_PRIMITIVE(xuehao),
-	GSONTREE_STRING(xingming)
+GSONTREE_OBJECT_KV(stu)={
+	GSONTREE_PAIR(Num),
+	GSONTREE_PAIR(name)
 	};
-GSONTREE(stu,2);
+GSONTREE_OBJECT(stu,2);
+
+
+gsonerr_t  age(void *temp,gsonHandler_t sog){
+	printf("3\n");
+	if(sog == GET_value){
+		GSON_INERT_PRIMITIVE(temp,"12");
+	}else{
+		
+	}	
+	return 0;	
+}
+GSONTREE_PRIMITIVE(age,age);
+
+gsonerr_t  grade(void *temp,gsonHandler_t sog){
+	printf("4\n");
+	if(sog == GET_value){
+		GSON_INERT_PRIMITIVE_V2A(temp,"98");
+		GSON_INERT_PRIMITIVE_V2A(temp,"96");
+		GSON_INERT_PRIMITIVE_V2A(temp,"88");
+		GSON_INERT_PRIMITIVE_V2A(temp,"78");
+		GSON_INERT_PRIMITIVE_V2A(temp,"58");
+	}else{
+		
+	}	
+	return 0;	
+}
+GSONTREE_ARRAY(grade,grade);
+
+GSONTREE_KV(temp)={
+	GSONTREE_PAIR(age),
+	GSONTREE_PAIR(stu),
+	GSONTREE_PAIR(grade)
+};
+GSONTREE(temp,3);
 
 
 int main(){
@@ -57,8 +103,9 @@ int main(){
 	//generator code area.
 	//
 	//
+	
 	gson_init_generator(&generator,str,1000);
-	GSON_BUILD(&generator,stu);
+	GSON_BUILD(&generator,temp);
 	
 	printf("%s\n",str);
 	
