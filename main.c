@@ -12,7 +12,14 @@
  *	Author:			GalaIO
  *	Date:			2015-7-19 12:57 AM
  *	Description:	-test a new way to construct a JSON str,you must build serval callback handler.
- *					-这个版本比较 失败 不能出现嵌套结构的 json。 
+ *					-This version  fails to parser  a nested structure of JSON. 
+ *
+ *	Author:			GalaIO
+ *	Date:			2015-7-20 10:02 PM
+ *	Description:	-what a wonderful time,code runs very smoothly according to the example.
+ *					
+ *
+ *
 */
 #include <stdio.h>
 
@@ -29,21 +36,25 @@
 
 
 gsonerr_t Num(void *temp,gsonHandler_t sog){
-	printf("1\n");
+
 	if(sog == GET_value){
 		GSON_INERT_PRIMITIVE(temp,"1504121988");
 	}else{
-		
+		char str[20];
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s\n",str);
 	}
 	return 0;	
 }
 GSONTREE_PRIMITIVE(Num);
 gsonerr_t name(void *temp,gsonHandler_t sog){
-	printf("2\n");	
+	
 	if(sog == GET_value){
 		GSON_INERT_STRING(temp,"pro.yang");
 	}else{
-		
+		char str[20];
+		GSON_PARSER_STRING(temp,str);
+		printf("%s\n",str);
 	}
 	return 0;	
 }
@@ -57,18 +68,20 @@ GSONTREE_OBJECT(stu,2);
 
 
 gsonerr_t  age(void *temp,gsonHandler_t sog){
-	printf("3\n");
+
 	if(sog == GET_value){
 		GSON_INERT_PRIMITIVE(temp,"12");
 	}else{
-		
+		char str[20];
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s\n",str);
 	}	
 	return 0;	
 }
 GSONTREE_PRIMITIVE(age);
 
 gsonerr_t  grade(void *temp,gsonHandler_t sog){
-	printf("4\n");
+
 	if(sog == GET_value){
 		GSON_INERT_PRIMITIVE(temp,"98");
 		GSON_INERT_PRIMITIVE(temp,"96");
@@ -76,7 +89,17 @@ gsonerr_t  grade(void *temp,gsonHandler_t sog){
 		GSON_INERT_PRIMITIVE(temp,"78");
 		GSON_INERT_PRIMITIVE(temp,"58");
 	}else{
-		
+		char str[20];
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s ",str);
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s ",str);
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s ",str);
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s ",str);
+		GSON_PARSER_PRIMITIVE(temp,str);
+		printf("%s\n",str);
 	}	
 	return 0;	
 }
@@ -98,16 +121,19 @@ int main(){
 	gson_generator generator;
 	char str[1000];
 	
+	gson_parser p;
+	gsontok_t t[128]; //We expect no more than 128 tokens 
 	//
 	//
 	//generator code area.
 	//
 	//
 	
-	gson_init_generator(&generator,str,1000);
-	GSON_BUILD(&generator,temp);
+	GSON_BUILD(str,1000,&generator,temp);
 	
 	printf("%s\n",str);
+	
+	GSON_PARSER(str,t,128,&p,temp);
 	
 	return 0;
 }
