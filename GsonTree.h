@@ -18,8 +18,21 @@
  *	Date:			2015-7-20  5:40 PM
  *	Description:	-simplify the use of macros.
  *					-add more notes.
+ *					
  *				
+ *	 
+ *	Author:			GalaIO
+ *	Date:			2015-7-20  5:40 PM
+ *	Description:	-simplify the use of macros.
+ *					-add more notes.
  *				
+ *				 			
+ *	 
+ *	Author:			GalaIO
+ *	Date:			2015-7-20  10:14 PM
+ *	Description:	-add two JSON parser,GSON_PARSER  and GSON_OBJECT_PARSER.
+ *				
+ *		
 **/
 #ifndef _GSONTREE_H_
 #define _GSONTREE_H_
@@ -99,6 +112,14 @@ typedef struct gsontree_array{
 //function in GsonTree
 //
 //
+/*
+	build a json data autoly.
+	@param  json_str	input the the string of json, witch will be filled autoly.
+	@param  json_size	ipput the max length of the string.
+	@param  generator	the handler of json generator.
+	@param  object		the info of the object,can indicate the struct of json tree.
+*/
+gsonerr_t	GSON_BUILD(char *json_str,int json_size,gson_generator *generator,const gsontree_object object);
 
 /*
 	build a json object autoly.
@@ -107,12 +128,31 @@ typedef struct gsontree_array{
 */
 gsonerr_t	GSON_OBJECT_BUILD(gson_generator *generator,const gsontree_object object);
 
+
+///
+///
+/////JSON parser code area.
+///
+///
+
 /*
-	build a json data autoly.
-	@param  generator	the handler of json generator.
+	parser a json String autoly.
+	@param  json_data 	input a complete JSON data String.
+	@param 	tok			input the gsontok_t array.
+	@param  tok_size	input the number of gsontok_t.
+	@param  parser		the handler of json parser.
 	@param  object		the info of the object,can indicate the struct of json tree.
 */
-gsonerr_t	GSON_BUILD(gson_generator *generator,const gsontree_object object);
+gsonerr_t	GSON_PARSER(char *json_data,gsontok_t *tok,int tok_size,gson_parser *parser,const gsontree_object object);
+
+
+/*
+	parser a json String autoly.
+	@param  parser		the handler of json parser.
+	@param  object		the info of the object,can indicate the struct of json tree.
+*/
+gsonerr_t	GSON_OBJECT_PARSER(gson_parser *parser,const gsontree_object object);
+
 
 #endif
 

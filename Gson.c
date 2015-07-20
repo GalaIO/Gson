@@ -9,23 +9,23 @@
 							insert...
 							...
 						end<obj>
-						
+
 	Date:			2015-2-6 
 	Author:			LaoGuo
 	Describtion:	update the code of gson-creator
-					we can creator-gson data on one generator.buf!!!
+					we can creator-gson data on one buf!!!
 					but only case by case,,,,,
 					
 					same api  rather than  different usal.
-					
-	
+
+
 	Date:			2015-7-4 am 
 	Author:			LaoGuo
 	Describtion:	-add a insert function for array as a sequenced value.
 					-redesign gson and gson type
 					-redesign gson code
-					
-					
+
+
 	Date:			2015-7-4 10:18 pm 
 	Author:			LaoGuo
 	Describtion:	-fix GSON_PARENT_LINKS bug.
@@ -34,26 +34,51 @@
 	Author:			LaoGuo
 	Describtion:	-no bug.
 					-we should use rebuild rather than compile.
-					
-					
+
+
 	Date:			2015-7-5 7:25 pm 
 	Author:			LaoGuo
 	Describtion:	-use parent link and strict mode default.
 					-test and fix bug.
-					
+
 	Date:			2015-7-6 8:30 pm 
 	Author:			LaoGuo
 	Describtion:	-add err info for json generator.
-					-handler generator.buf point autoly.	
+					-handler buf point autoly.	
 									
 	Date:			2015-7-6 11:09 pm 
 	Author:			LaoGuo
 	Describtion:	-add debug info for gson,it can use conveniently.
-									
-	Date:			2015-7-18 8£:23 pm 
-	Author:			LaoGuo
-	Describtion:	-change the way to generator a json str.
-					 because share a common var must handle ansy problem in muli-task place.
+
+	Date:			2015-7-19 7:41 pm 
+	Author:			GalaIO
+	Describtion:	-add more extern macro.	
+
+
+	Date:			2015-7-20 5:25 pm 
+	Author:			GalaIO
+	Describtion:	-add gsontype_t attribute to struct gson_generator.
+					-modefy few function for operating type_c in gson_generator.
+					 and it indicate the location where you are inserd data , eg. GSON_OBJECT or GSON_ARRAY.
+					 it's important for gsoninsertV . it's different when array or object is inserted.
+					-simplify the use of macros GSON_INERT_PRIMITIVE and GSON_INERT_STRING.
+					-add more notes.
+
+
+	Date:			2015-7-20 6:00 pm 
+	Author:			GalaIO
+	Describtion:	-add more gson_parser's members for gson_parser.
+					-reserved the old apis for old code.
+
+
+	Date:			2015-7-20 10:06 pm 
+	Author:			GalaIO
+	Describtion:	-add a member for gsontok_t,this member can only update in GSON_OBJECT or GSON_ARRAY.
+					 it becomes more bloated,but it is worth,then possible to delete member size.
+					 and modify few code for real-time update length.
+					-add two more extern macro GSON_PARSER_PRIMITIVE and GSON_PARSER_STRING.
+
+
 */
 
 #include "Gson.h"
@@ -422,6 +447,7 @@ static gsontok_t *gson_alloc_token(gson_parser *parser,
 	tok = &tokens[parser->toknext++];
 	tok->start = tok->end = -1;
 	tok->size = 0;
+	tok->length=0;
 	tok->parent = -1;
 	return tok;
 }
@@ -570,6 +596,8 @@ gsonerr_t gson_parse(gson_parser *parser, const char *js,
 				}
 				token->type = (c == '{' ? GSON_OBJECT : GSON_ARRAY);
 				token->start = parser->pos;
+				//update gsontok_t count.
+				token->length = count;
 				//update current toksuper.
 				//because the { or [ is the parent of following tokens.
 				parser->toksuper = parser->toknext - 1;
@@ -590,6 +618,8 @@ gsonerr_t gson_parse(gson_parser *parser, const char *js,
 					//find the most near token with same type (e.g { or [).
 					if (token->start != -1 && token->type == type) {
 						token->end = parser->pos + 1;
+						//update end.
+						token->length = count - token->length;
 						parser->toksuper = token->parent;
 						break;
 					}
@@ -665,7 +695,7 @@ gsonerr_t gson_parse(gson_parser *parser, const char *js,
 /*
  *	gson check from numberous results.
 */
-int gsonCheck(const char *gson, gsontok_t *tok, const char *s) {
+gsonerr_t gsonCheck(const char *gson, gsontok_t *tok, const char *s) {
 	if (tok->type == GSON_STRING && (int) strlen(s) == tok->end - tok->start &&
 			strncmp(gson + tok->start, s, tok->end - tok->start) == 0) {
 		return GSON_ERROR_NONE;
