@@ -1,17 +1,17 @@
 # Project: main
 # Makefile created by Dev-C++ 5.4.0
 
-CPP      = g++.exe
-CC       = gcc.exe
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o Gson.o $(RES)
-LINKOBJ  = main.o Gson.o $(RES)
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -static-libstdc++ -static-libgcc
+OBJ      = main.o Gson.o GsonTree.o $(RES)
+LINKOBJ  = main.o Gson.o GsonTree.o $(RES)
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -static-libstdc++ -static-libgcc -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include"
 BIN      = main.exe
-CXXFLAGS = $(CXXINCS) 
-CFLAGS   = $(INCS) 
+CXXFLAGS = $(CXXINCS)  -g3
+CFLAGS   = $(INCS)  -g3
 RM       = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
@@ -30,3 +30,6 @@ main.o: main.c
 
 Gson.o: Gson.c
 	$(CC) -c Gson.c -o Gson.o $(CFLAGS)
+
+GsonTree.o: GsonTree.c
+	$(CC) -c GsonTree.c -o GsonTree.o $(CFLAGS)
