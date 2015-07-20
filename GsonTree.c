@@ -12,6 +12,7 @@
 #include "GsonTree.h"
 
 
+
 /*
 	build a json data autoly.
 	@param  generator	the handler of json generator.

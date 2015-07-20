@@ -37,7 +37,7 @@ gsonerr_t Num(void *temp,gsonHandler_t sog){
 	}
 	return 0;	
 }
-GSONTREE_PRIMITIVE(Num,Num);
+GSONTREE_PRIMITIVE(Num);
 gsonerr_t name(void *temp,gsonHandler_t sog){
 	printf("2\n");	
 	if(sog == GET_value){
@@ -47,7 +47,7 @@ gsonerr_t name(void *temp,gsonHandler_t sog){
 	}
 	return 0;	
 }
-GSONTREE_STRING(name,name);
+GSONTREE_STRING(name);
 
 GSONTREE_OBJECT_KV(stu)={
 	GSONTREE_PAIR(Num),
@@ -65,7 +65,7 @@ gsonerr_t  age(void *temp,gsonHandler_t sog){
 	}	
 	return 0;	
 }
-GSONTREE_PRIMITIVE(age,age);
+GSONTREE_PRIMITIVE(age);
 
 gsonerr_t  grade(void *temp,gsonHandler_t sog){
 	printf("4\n");
@@ -80,7 +80,7 @@ gsonerr_t  grade(void *temp,gsonHandler_t sog){
 	}	
 	return 0;	
 }
-GSONTREE_ARRAY(grade,grade);
+GSONTREE_ARRAY(grade);
 
 GSONTREE_KV(temp)={
 	GSONTREE_PAIR(age),

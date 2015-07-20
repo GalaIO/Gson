@@ -13,6 +13,12 @@
  *	Description:	-add GSONTREE_OBJECT_KV and GSONTREE_OBJECT for build object data.
  *				
  *				
+ *	 
+ *	Author:			GalaIO
+ *	Date:			2015-7-20  5:40 PM
+ *	Description:	-simplify the use of macros.
+ *					-add more notes.
+ *				
  *				
 **/
 #ifndef _GSONTREE_H_
@@ -62,16 +68,28 @@ typedef struct gsontree_array{
 	gsonerr_t 	(*handler)(void *temp,gsonHandler_t sog);
 }gsontree_array;
 
+/*
 #define GSONTREE_STRING(name,handler)			const gsontree_kv pair_##name={GSON_STRING,(handler)}
 #define GSONTREE_PRIMITIVE(name,handler)		const gsontree_kv pair_##name={GSON_PRIMITIVE,(handler)}
 #define GSONTREE_ARRAY(name,handler)			const gsontree_array pair_##name={GSON_ARRAY,(handler)}
+*/
+//modify th correspoing macro.
+//just put the callback handler name in it.
+#define GSONTREE_STRING(name)			const gsontree_kv pair_##name={GSON_STRING,(name)}
+#define GSONTREE_PRIMITIVE(name)		const gsontree_kv pair_##name={GSON_PRIMITIVE,(name)}
+#define GSONTREE_ARRAY(name)			const gsontree_array pair_##name={GSON_ARRAY,(name)}
 
+//quote above packaged handler.
 #define GSONTREE_PAIR(name)				{#name , (gsontree_type*)&pair_##name}
 
+//quote above packaged pair.
 #define GSONTREE_KV(name)				const gsontree_pair pairARR_##name[]    
+//build a json tree.
 #define GSONTREE(name,count)			const gsontree_object name = { GSON_OBJECT,count, (gsontree_pair *)pairARR_##name}
 
+//quote above packaged pair.
 #define GSONTREE_OBJECT_KV(name)		const gsontree_pair pairARR_##name[]    
+//build a json object tree.    
 #define GSONTREE_OBJECT(name,count)		const gsontree_object pair_##name = { GSON_OBJECT,count, (gsontree_pair *)pairARR_##name}
    
 
@@ -88,6 +106,13 @@ typedef struct gsontree_array{
 	@param  object		the info of the object,can indicate the struct of json tree.
 */
 gsonerr_t	GSON_OBJECT_BUILD(gson_generator *generator,const gsontree_object object);
+
+/*
+	build a json data autoly.
+	@param  generator	the handler of json generator.
+	@param  object		the info of the object,can indicate the struct of json tree.
+*/
+gsonerr_t	GSON_BUILD(gson_generator *generator,const gsontree_object object);
 
 #endif
 

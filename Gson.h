@@ -52,7 +52,17 @@
 									
 	Date:			2015-7-19 7:41 pm 
 	Author:			GalaIO
-	Describtion:	-add more extern macro.
+	Describtion:	-add more extern macro.	
+	
+									
+	Date:			2015-7-20 5:25 pm 
+	Author:			GalaIO
+	Describtion:	-add gsontype_t attribute to struct gson_generator.
+					-modefy few function for operating type_c in gson_generator.
+					 and it indicate the location where you are inserd data , eg. GSON_OBJECT or GSON_ARRAY.
+					 it's important for gsoninsertV . it's different when array or object is inserted.
+					-simplify the use of macros.
+					-add more notes.
 */
 #ifndef _GSON_H_
 #define _GSON_H_
