@@ -70,11 +70,11 @@ GSONTREE_PRIMITIVE(age,age);
 gsonerr_t  grade(void *temp,gsonHandler_t sog){
 	printf("4\n");
 	if(sog == GET_value){
-		GSON_INERT_PRIMITIVE_V2A(temp,"98");
-		GSON_INERT_PRIMITIVE_V2A(temp,"96");
-		GSON_INERT_PRIMITIVE_V2A(temp,"88");
-		GSON_INERT_PRIMITIVE_V2A(temp,"78");
-		GSON_INERT_PRIMITIVE_V2A(temp,"58");
+		GSON_INERT_PRIMITIVE(temp,"98");
+		GSON_INERT_PRIMITIVE(temp,"96");
+		GSON_INERT_PRIMITIVE(temp,"88");
+		GSON_INERT_PRIMITIVE(temp,"78");
+		GSON_INERT_PRIMITIVE(temp,"58");
 	}else{
 		
 	}	

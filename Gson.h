@@ -109,7 +109,7 @@ typedef enum {
 	GSON_ERROR_NONE = 0,
 	/* Not enough tokens were provided */
 	GSON_ERROR_NOMEM = -1,
-	/* Invalid character inside JSON string */
+	/* Invalid character or operation inside JSON string */
 	GSON_ERROR_INVAL = -2,
 	/* The string is not a full JSON packet, more bytes expected */
 	GSON_ERROR_PART = -3,
@@ -156,6 +156,8 @@ typedef struct {
 typedef struct {
 	char *buf;
 	int size; 
+	//type_C  indicate the current muti-type whitch you will insert. eg. array,object...
+	gsontype_t	type_c; 
 	//this bak_fg indicates the truth that the json data cannot nesting over 100 object or array.
 	//that enough for oridary json data.
 	char bak_fg[GSON_BACK_FLAG+2];
@@ -195,14 +197,11 @@ gsonerr_t gsonInsertKV(gson_generator *generator,gsontype_t stype,char *key,char
 
 gsonerr_t gsonInsertK(gson_generator *generator,char *key);
 
-gsonerr_t gsonInsertV2K(gson_generator *generator,gsontype_t stype,gsontype_t ktype,char *value);
+gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value);
 
 //extern macro
-#define GSON_INERT_PRIMITIVE(generator,value)	gsonInsertV2K((gson_generator *)generator,GSON_PRIMITIVE,GSON_PRIMITIVE,value)
-#define GSON_INERT_STRING(generator,value)		gsonInsertV2K((gson_generator *)generator,GSON_STRING,GSON_STRING,value)
-
-#define GSON_INERT_PRIMITIVE_V2A(generator,value)	gsonInsertV2K((gson_generator *)generator,GSON_PRIMITIVE,GSON_ARRAY,value)
-#define GSON_INERT_STRING_V2A(generator,value)		gsonInsertV2K((gson_generator *)generator,GSON_STRING,GSON_ARRAY,value)
+#define GSON_INERT_PRIMITIVE(generator,value)	gsonInsertV((gson_generator *)generator,GSON_PRIMITIVE,value)
+#define GSON_INERT_STRING(generator,value)		gsonInsertV((gson_generator *)generator,GSON_STRING,value)
 
 /**
  * Create GSON parser over an array of tokens

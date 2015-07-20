@@ -76,6 +76,7 @@
 void gson_init_generator(gson_generator *generator,char *str,int str_size) {
 	generator->buf=str;
 	generator->size=str_size;
+	generator->type_c=GSON_PRIMITIVE-1;
 }
 
 gsonerr_t GSON_START(gson_generator *generator){
@@ -84,6 +85,7 @@ gsonerr_t GSON_START(gson_generator *generator){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
+	generator->type_c=GSON_OBJECT;
 	generator->buf[0]='{';
 	generator->buf[1]=',';
 	generator->buf[2]='}';
@@ -119,6 +121,7 @@ gsonerr_t GSON_START_OBJECT(gson_generator *generator){
 		return GSON_ERROR_PART;
 	}
 	
+	generator->type_c=GSON_OBJECT;
 	if(*generator->buf=='\0'){
 		generator->buf--;
 	}
@@ -180,6 +183,7 @@ gsonerr_t GSON_START_ARRAY(gson_generator *generator,char *name){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_START_ARRAY: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
+	generator->type_c=GSON_ARRAY;
 	if(*generator->buf=='\0'){
 		generator->buf--;
 	}
@@ -273,6 +277,11 @@ gsonerr_t gsonInsertKV(gson_generator *generator,gsontype_t stype,char *key,char
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertKV: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
+	if(generator->type_c != GSON_OBJECT){
+		//key:value can't inserted to array
+		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertKV: not a corret operation for JSON!!!\n"));
+		return GSON_ERROR_INVAL;
+	}
 	if(*generator->buf=='\0'){
 		generator->buf--;
 	}	
@@ -317,6 +326,11 @@ gsonerr_t gsonInsertK(gson_generator *generator,char *key){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertK: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
+	if(generator->type_c != GSON_OBJECT){
+		//key:value can't inserted to array
+		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertK: not a corret operation for JSON!!!\n"));
+		return GSON_ERROR_INVAL;
+	}
 	if(*generator->buf=='\0'){
 		generator->buf--;
 	}	
@@ -345,7 +359,7 @@ gsonerr_t gsonInsertK(gson_generator *generator,char *key){
 /*
  *insert ' "value" ' to json for array.
 */
-gsonerr_t gsonInsertV2K(gson_generator *generator,gsontype_t stype,gsontype_t ktype,char *value){
+gsonerr_t gsonInsertV(gson_generator *generator,gsontype_t stype,char *value){
 //key-value is the type of the value pair.
 //generator.buf is the alright index of the new inserted type in gson String, and point to } or ].
 	
@@ -366,7 +380,7 @@ gsonerr_t gsonInsertV2K(gson_generator *generator,gsontype_t stype,gsontype_t kt
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in gsonInsertV: not a insertable format.\n"));
 		return GSON_ERROR_PART;
 	}
-	if(*(generator->buf-1)!='{' &&*(generator->buf-1)!='['&&ktype==GSON_ARRAY){
+	if(*(generator->buf-1)!='{' &&*(generator->buf-1)!='['&&generator->type_c == GSON_ARRAY){
 		generator->buf++;
 	}
 	if(stype==GSON_STRING){
