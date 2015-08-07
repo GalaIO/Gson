@@ -62,7 +62,7 @@ typedef struct gsontree_kv{
 	//callback protype.
 	// @param	temp  can cast to (gson_generator *) or (gsontok_p *) for getter and setter.
 	// @param   sog	  indicate the handler is set or get.
-	gsonerr_t 	(*handler)(void *temp,gsonHandler_t sog);		
+	void 	(*handler)(void *temp,gsonHandler_t sog);
 }gsontree_kv;
 
 //the object.
@@ -78,7 +78,7 @@ typedef struct gsontree_array{
 	//callback protype.
 	// @param	temp  can cast to (gson_generator *) or (gsontok_p *) for getter and setter.
 	// @param   sog	  indicate the handler is set or get.
-	gsonerr_t 	(*handler)(void *temp,gsonHandler_t sog);
+	void 	(*handler)(void *temp,gsonHandler_t sog);
 }gsontree_array;
 
 /*

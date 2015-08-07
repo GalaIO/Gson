@@ -17,7 +17,7 @@
  *	Author:			GalaIO
  *	Date:			2015-7-20 10:02 PM
  *	Description:	-what a wonderful time,code runs very smoothly according to the example.
- *					
+ *
  *
  *
 */
@@ -34,8 +34,7 @@
 ///
 ///
 
-
-gsonerr_t Num(void *temp,gsonHandler_t sog){
+void Num(void *temp,gsonHandler_t sog){
 
 	if(sog == GET_value){
 		GSON_INERT_PRIMITIVE(temp,"1504121988");
@@ -43,11 +42,10 @@ gsonerr_t Num(void *temp,gsonHandler_t sog){
 		char str[20];
 		GSON_PARSER_PRIMITIVE(temp,str);
 		printf("%s\n",str);
-	}
-	return 0;	
+	}	
 }
 GSONTREE_PRIMITIVE(Num);
-gsonerr_t name(void *temp,gsonHandler_t sog){
+void name(void *temp,gsonHandler_t sog){
 	
 	if(sog == GET_value){
 		GSON_INERT_STRING(temp,"pro.yang");
@@ -56,7 +54,6 @@ gsonerr_t name(void *temp,gsonHandler_t sog){
 		GSON_PARSER_STRING(temp,str);
 		printf("%s\n",str);
 	}
-	return 0;	
 }
 GSONTREE_STRING(name);
 
@@ -67,7 +64,7 @@ GSONTREE_OBJECT_KV(stu)={
 GSONTREE_OBJECT(stu,2);
 
 
-gsonerr_t  age(void *temp,gsonHandler_t sog){
+void  age(void *temp,gsonHandler_t sog){
 
 	if(sog == GET_value){
 		GSON_INERT_PRIMITIVE(temp,"12");
@@ -76,11 +73,10 @@ gsonerr_t  age(void *temp,gsonHandler_t sog){
 		GSON_PARSER_PRIMITIVE(temp,str);
 		printf("%s\n",str);
 	}	
-	return 0;	
 }
 GSONTREE_PRIMITIVE(age);
 
-gsonerr_t  grade(void *temp,gsonHandler_t sog){
+void  grade(void *temp,gsonHandler_t sog){
 
 	if(sog == GET_value){
 		GSON_INERT_PRIMITIVE(temp,"98");
@@ -101,7 +97,6 @@ gsonerr_t  grade(void *temp,gsonHandler_t sog){
 		GSON_PARSER_PRIMITIVE(temp,str);
 		printf("%s\n",str);
 	}	
-	return 0;	
 }
 GSONTREE_ARRAY(grade);
 
@@ -111,7 +106,6 @@ GSONTREE_KV(temp)={
 	GSONTREE_PAIR(grade)
 };
 GSONTREE(temp,3);
-
 
 int main(){
 	

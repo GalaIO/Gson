@@ -188,7 +188,7 @@ gsonerr_t	GSON_PARSER(char *json_data,gsontok_t *tok,int tok_size,gson_parser *p
 	gson_init_parser(parser);
 	//init other members.
 	parser->json_buf = json_data;
-	parser->type = GSON_PRIMITIVE - 1;
+	parser->type = GSON_PRIMITIVE;
 	parser->tok = NULL;
 	parser->tok_c = -1;
 	

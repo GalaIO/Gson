@@ -250,7 +250,7 @@ void gson_init_parser(gson_parser *parser);
  * Run GSON parser. It parses a GSON data string into and array of tokens, each describing
  * a single GSON object.
  */
-gsonerr_t gson_parse(gson_parser *parser, const char *js,
+int gson_parse(gson_parser *parser, const char *js,
 		gsontok_t *tokens, unsigned int num_tokens);
 
 gsonerr_t gsonCheck(const char *gson, gsontok_t *tok, const char *s);

@@ -101,7 +101,7 @@
 void gson_init_generator(gson_generator *generator,char *str,int str_size) {
 	generator->buf=str;
 	generator->size=str_size;
-	generator->type_c=GSON_PRIMITIVE-1;
+	generator->type_c=GSON_PRIMITIVE;
 }
 
 gsonerr_t GSON_START(gson_generator *generator){
@@ -175,11 +175,11 @@ gsonerr_t GSON_START_OBJECT(gson_generator *generator){
 	
 }
 gsonerr_t GSON_END_OBJECT(gson_generator *generator){
+	char *tmp;
 	if(generator->buf==NULL){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END_OBJECT: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	char *tmp;
 	if(*generator->buf=='\0'){
 		generator->buf--;
 	}
@@ -240,12 +240,12 @@ gsonerr_t GSON_START_ARRAY(gson_generator *generator,char *name){
 
 
 gsonerr_t GSON_END_ARRAY(gson_generator *generator){
+	char *tmp;
 	//generator.buf must remain more 1 char.
 	if(generator->buf==NULL||(generator->size=generator->size-1)<0){
 		GSON_DEBUG_DIA(GSON_DEBUG_GENERATOR_ON,("-GENERATOR in GSON_END_ARRAY: sorry,generator.buf is NULL!!! or no more space!!!\n"));
 		return GSON_ERROR_PART;
 	}
-	char *tmp;
 	if(*generator->buf=='\0'){
 		generator->buf--;
 	}
@@ -569,7 +569,7 @@ static gsonerr_t gson_parse_string(gson_parser *parser, const char *js,
  * Parse GSON string and fill tokens.
  * return error info or the count of tokens
  */
-gsonerr_t gson_parse(gson_parser *parser, const char *js,
+int gson_parse(gson_parser *parser, const char *js,
 		gsontok_t *tokens, unsigned int num_tokens) {
 	gsonerr_t r;
 	int i;
