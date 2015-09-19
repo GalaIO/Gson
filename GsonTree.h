@@ -31,6 +31,11 @@
  *	Author:			GalaIO
  *	Date:			2015-7-20  10:14 PM
  *	Description:	-add two JSON parser,GSON_PARSER  and GSON_OBJECT_PARSER.
+ *				 			
+ *	 
+ *	Author:			GalaIO
+ *	Date:			2015-9-18  12:00 AM
+ *	Description:	-add two JSON two new macro for json construct, ver2, using macro vargs.
  *				
  *		
 **/
@@ -104,8 +109,16 @@ typedef struct gsontree_array{
 #define GSONTREE_OBJECT_KV(name)		const gsontree_pair pairARR_##name[]    
 //build a json object tree.    
 #define GSONTREE_OBJECT(name,count)		const gsontree_object pair_##name = { GSON_OBJECT,count, (gsontree_pair *)pairARR_##name}
+
+  
+//ver2, build a json object tree.    
+#define GSONTREE_OBJECTER(name,...)		const gsontree_pair pairARR_##name[] = {__VA_ARGS__};\
+										const gsontree_object pair_##name = { GSON_OBJECT,sizeof(pairARR_##name)/sizeof(gsontree_pair), (gsontree_pair *)pairARR_##name}
    
 
+//ver2, build a json tree.
+#define GSONTREER(name,...)				const gsontree_pair pairARR_##name[] = {__VA_ARGS__};\
+										const gsontree_object name = { GSON_OBJECT,sizeof(pairARR_##name)/sizeof(gsontree_pair), (gsontree_pair *)pairARR_##name}
 
 //
 //

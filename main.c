@@ -107,6 +107,14 @@ GSONTREE_KV(temp)={
 };
 GSONTREE(temp,3);
 
+/*ver2, gsontreer construct */
+GSONTREER(temp1,
+	GSONTREE_PAIR(age),
+	GSONTREE_PAIR(stu),
+	GSONTREE_PAIR(grade)
+);
+
+
 int main(){
 	
 	
@@ -123,11 +131,11 @@ int main(){
 	//
 	//
 	
-	GSON_BUILD(str,1000,&generator,temp);
+	GSON_BUILD(str,1000,&generator,temp1);
 	
 	printf("%s\n",str);
 	
-	GSON_PARSER(str,t,128,&p,temp);
+	GSON_PARSER(str,t,128,&p,temp1);
 	
 	return 0;
 }
